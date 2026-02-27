@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NeoLemon Children's Book Generator</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f9f7f2;color:#1a1a2e;min-height:100vh}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+.sticky-header{background:#1a1a2e;position:sticky;top:0;z-index:100;box-shadow:0 2px 20px rgba(0,0,0,0.3)}
+.header-inner{max-width:1100px;margin:0 auto;padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo-icon{width:34px;height:34px;background:#e8a020;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.logo-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#fff}
+.logo-sub{font-size:11px;color:#f5c96a}
+.badge{background:#e8a020;color:#1a1a2e;font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px}
+.tabs-bar{background:#2d2d4a;display:flex;overflow-x:auto}
+.tabs-inner{max-width:1100px;margin:0 auto;display:flex;width:100%;padding:0 20px}
+.tab-btn{background:none;border:none;font-size:13px;padding:12px 16px;white-space:nowrap;transition:all 0.2s;border-bottom:3px solid transparent;color:rgba(255,255,255,0.5);font-weight:500}
+.tab-btn.active{color:#e8a020;font-weight:700;border-bottom-color:#e8a020}
+.content{max-width:1100px;margin:0 auto;padding:28px 20px 80px}
+.section-label{font-family:monospace;font-size:11px;font-weight:500;color:#0e8c7a;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px}
+.section-title{font-family:Georgia,serif;font-size:26px;font-weight:900;color:#1a1a2e;margin-bottom:6px}
+.section-desc{color:#7a7870;font-size:14px;line-height:1.7;max-width:680px}
+.divider{height:3px;background:linear-gradient(90deg,#e8a020,#f5c96a,transparent);border-radius:2px;margin:20px 0}
+.card{background:#fff;border:1px solid #e0ddd5;border-radius:12px;padding:20px 24px;margin-bottom:16px;box-shadow:0 2px 16px rgba(26,26,46,0.08)}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #e0ddd5}
+.card-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.card-title{font-family:Georgia,serif;font-size:16px;font-weight:700;color:#1a1a2e}
+.card-sub{font-size:12px;color:#7a7870}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:12px;font-weight:700;color:#2d2d4a;letter-spacing:0.3px}
+.field .req{color:#c0392b;margin-left:3px}
+.field .hint{font-size:11px;color:#7a7870;font-style:italic}
+.inp{background:#f9f7f2;border:1.5px solid #e0ddd5;border-radius:8px;padding:9px 12px;font-size:14px;color:#1a1a2e;width:100%;outline:none}
+.inp:focus{border-color:#0e8c7a}
+textarea.inp{resize:vertical;min-height:80px;line-height:1.6}
+select.inp{cursor:pointer}
+.info-box{border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13.5px;line-height:1.65;border-left:4px solid}
+.info-teal{background:#e4f5f2;border-color:#0e8c7a}
+.info-gold{background:#fdf3e0;border-color:#e8a020}
+.info-sky{background:#eaf1fb;border-color:#2563a8}
+.info-green{background:#e8f5ee;border-color:#1a7a3e}
+.info-purple{background:#f0eaf9;border-color:#5b2d8f}
+.style-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:12px 0}
+.style-card{border:2px solid #e0ddd5;background:#fff;border-radius:10px;padding:12px 14px;cursor:pointer;transition:all 0.2s}
+.style-card:hover{border-color:#0e8c7a;background:#e4f5f2}
+.style-card.selected{border-color:#0e8c7a;background:#e4f5f2}
+.style-name{font-weight:700;font-size:13px;color:#1a1a2e;margin-bottom:3px}
+.style-age{font-size:11px;color:#7a7870;margin-bottom:5px}
+.style-desc{font-size:12px;color:#2d2d4a;line-height:1.5}
+.progress-bar-wrap{background:#f9f7f2;border:1px solid #e0ddd5;border-radius:4px;height:8px;margin-bottom:6px;overflow:hidden}
+.progress-bar{height:100%;background:#0e8c7a;border-radius:4px;transition:width 0.4s}
+.progress-label{font-size:12px;color:#7a7870;text-align:right;margin-bottom:16px}
+.btn-primary{width:100%;padding:14px 24px;background:linear-gradient(135deg,#0e8c7a,#0a6b5e);color:#fff;border:none;border-radius:10px;font-family:Georgia,serif;font-size:17px;font-weight:700;box-shadow:0 4px 20px rgba(14,140,122,0.35)}
+.btn-secondary{padding:10px 20px;border-radius:8px;border:1.5px solid #e0ddd5;background:#f9f7f2;color:#2d2d4a;font-size:14px;font-weight:600}
+.btn-teal{padding:10px 20px;border-radius:8px;border:none;background:#0e8c7a;color:#fff;font-size:14px;font-weight:600}
+.monospace-box{background:#1a1a2e;color:#e8e6e0;border-radius:12px;padding:22px 24px;font-family:monospace;font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-word;max-height:560px;overflow-y:auto;box-shadow:0 8px 40px rgba(26,26,46,0.14)}
+.copy-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:7px;font-size:13px;font-weight:600;border:none;background:#0e8c7a;color:#fff;transition:all 0.2s}
+.copy-btn.small{padding:4px 12px;font-size:11px;background:#e4f5f2;color:#0e8c7a;border-radius:5px}
+.copy-btn.copied{background:#0e8c7a;color:#fff}
+.page-block{background:#fff;border:1px solid #e0ddd5;border-radius:12px;margin-bottom:12px;overflow:hidden;box-shadow:0 2px 12px rgba(26,26,46,0.07)}
+.page-header{background:#2d2d4a;padding:11px 18px;display:flex;align-items:center;gap:12px}
+.page-num{background:#e8a020;color:#1a1a2e;font-family:monospace;font-size:11px;font-weight:700;padding:3px 10px;border-radius:4px;min-width:64px;text-align:center}
+.page-title{color:#fff;font-size:13px;font-weight:500;flex:1}
+.page-tool-badge{font-size:11px;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.08);padding:2px 8px;border-radius:4px}
+.page-body{padding:20px;display:grid;gap:16px}
+.section-label-sm{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.writing-dir-box{background:#f9f7f2;border:1.5px solid #e0ddd5;border-radius:8px;padding:14px 16px;font-family:Georgia,serif;font-size:14px;line-height:1.85;color:#111;white-space:pre-wrap}
+.prompt-box{background:#fdf3e0;border:1.5px solid #e8a020;border-radius:8px;padding:14px 16px;font-family:monospace;font-size:12.5px;line-height:1.7;color:#2d2d4a;white-space:pre-wrap}
+.director-box{background:#e4f5f2;border:1.5px solid #0e8c7a;border-radius:8px;padding:12px 14px;font-size:13px;line-height:1.6;color:#2d2d4a}
+.tool-box{background:#eaf1fb;border:1.5px solid #2563a8;border-radius:8px;padding:12px 14px;font-size:12.5px;line-height:1.65;color:#2d2d4a;white-space:pre-wrap}
+.bottom-row{display:flex;gap:12px;margin-top:16px}
+.char-lock-box{background:#fdf3e0;border:1.5px solid #e8a020;border-radius:10px;padding:16px 18px;margin-bottom:16px}
+.char-lock-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;font-size:13.5px;margin-bottom:10px}
+.ded-block{background:#fff;border:2px solid #5b2d8f;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.ded-header{background:#5b2d8f;padding:11px 18px;display:flex;align-items:center;gap:12px}
+.ded-preview{background:#fffdf7;border:1.5px solid #5b2d8f;border-radius:10px;padding:28px 32px;text-align:center;position:relative;overflow:hidden;margin-bottom:6px}
+.ded-stripe{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,#5b2d8f,#e8a020,#5b2d8f)}
+.ded-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#5b2d8f;opacity:0.55;margin-bottom:16px}
+.ded-text{font-family:Georgia,serif;font-size:15px;line-height:1.9;color:#1a1a2e;font-style:italic;white-space:pre-wrap}
+.ded-from{margin-top:18px;font-family:Georgia,serif;font-size:13px;color:#7a7870}
+.wf-step{display:flex;gap:16px;background:#fff;border:1px solid #e0ddd5;border-radius:10px;padding:16px 18px;box-shadow:0 2px 10px rgba(26,26,46,0.06);margin-bottom:12px}
+.wf-num{min-width:36px;height:36px;background:#0e8c7a;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:Georgia,serif;font-weight:700;font-size:16px;flex-shrink:0}
+.wf-title{font-family:Georgia,serif;font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:4px}
+.wf-desc{font-size:13.5px;color:#2d2d4a;line-height:1.65;white-space:pre-wrap}
+.wf-tags{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}
+.wf-tag{background:#fdf3e0;border:1px solid #e8a020;color:#1a1a2e;font-family:monospace;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px}
+.tip-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+.tip-card{background:#fff;border:1px solid #e0ddd5;border-radius:10px;padding:14px 16px;box-shadow:0 2px 10px rgba(26,26,46,0.06)}
+.tip-icon{font-size:22px;margin-bottom:6px}
+.tip-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:5px}
+.tip-desc{font-size:12.5px;color:#2d2d4a;line-height:1.6}
+.sub-heading{font-family:Georgia,serif;font-size:18px;font-weight:700;color:#1a1a2e;margin-bottom:12px;margin-top:8px}
+@media(max-width:680px){
+  .grid-2,.grid-3,.style-grid,.tip-grid{grid-template-columns:1fr}
+  .char-lock-grid{grid-template-columns:1fr}
+  .content{padding:16px 12px 80px}
+}
+</style>
+</head>
+<body>
+
+<div class="sticky-header">
+  <div class="header-inner">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="logo-icon">📚</div>
+      <div>
+        <div class="logo-title">Children's Book Generator</div>
+        <div class="logo-sub">NeoLemon AI · Character Consistency Edition</div>
+      </div>
+    </div>
+    <span class="badge">NeoLemon Optimised</span>
+  </div>
+  <div class="tabs-bar">
+    <div class="tabs-inner" id="tabsInner"></div>
+  </div>
+</div>
+
+<div class="content" id="mainContent"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+// DATA & CONSTANTS
+// ═══════════════════════════════════════════════
+const STYLE_NAMES = {
+  pixar:"Pixar Animation 3D",
+  watercolour:"Soft Watercolour Storybook",
+  flat2d:"Vibrant 2D Flat Cartoon",
+  anime:"Anime / Manga Lite",
+  claymation:"Claymation / Chibi",
+  scandi:"Minimalist Scandinavian 2D"
+};
+const STYLES_LIST = [
+  {id:"pixar",      label:"✨ Pixar Animation 3D",      age:"Best: Ages 3–8",  desc:"Soft 3D renders, rounded characters, warm studio lighting. Most popular on NeoLemon."},
+  {id:"watercolour",label:"🎨 Soft Watercolour",        age:"Best: Ages 2–5",  desc:"Gentle painted feel, translucent washes, hand-painted texture. Classic picture book warmth."},
+  {id:"flat2d",     label:"🖍️ Vibrant 2D Flat Cartoon", age:"Best: Ages 3–7",  desc:"Bold outlines, bright flat colours, high contrast. Modern and graphic. Great for action."},
+  {id:"anime",      label:"⭐ Anime / Manga Lite",      age:"Best: Ages 4–8",  desc:"Large expressive eyes, clean bright colours, dynamic poses. Kawaii adventure style."},
+  {id:"claymation", label:"🧸 Claymation / Chibi",      age:"Best: Ages 2–6",  desc:"Chunky clay-like characters, big heads, small bodies. Extremely cute for toddlers."},
+  {id:"scandi",     label:"🌿 Scandinavian Minimal",    age:"Best: Ages 2–4",  desc:"Simple geometric shapes, muted earthy palette. Modern and calm for bedtime stories."},
+];
+const TABS = ["① Book Brief","② Master Prompt","③ Page Prompts","④ NeoLemon Workflow","⑤ Tips & Tricks"];
+const REQUIRED_FIELDS = ["name","age","gender","skin","hair","outfit","personality","favThings","bookLength","tone","theme","setting"];
+
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+let currentTab = 0;
+let copiedId = null;
+let copiedTimer = null;
+
+let F = {
+  name:"",age:"",gender:"",skin:"",hair:"",eye:"",outfit:"",features:"",
+  personality:"",favThings:"",favColour:"",favFood:"",favAnimal:"",
+  bookLength:"24",tone:"",theme:"",setting:"",lesson:"",suppChars:"",villain:"",specialObj:"",
+  selectedStyle:"",palette:"",trimSize:"8×8 inch square",
+  printSpec:"300 DPI CMYK for print (NeoLemon free upscale to 2400×3000px)",
+  photoUpload:"No photo — text description only",
+  dedication:"",dedicationFrom:""
+};
+
+// ═══════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════
+function makeTag(n){ return "@"+(n||"hero").toLowerCase().replace(/\s+/g,"_"); }
+function pronoun(g){ return g==="Girl — she/her"?"she":"they"; }
+function possessive(g){ return g==="Girl — she/her"?"her":"their"; }
+function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function nl2br(s){ return esc(s).replace(/\n/g,"<br>"); }
+
+function copyText(text, btnId) {
+  navigator.clipboard.writeText(text).then(() => {
+    if (copiedTimer) clearTimeout(copiedTimer);
+    copiedId = btnId;
+    render();
+    copiedTimer = setTimeout(() => { copiedId = null; render(); }, 2000);
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+    if (copiedTimer) clearTimeout(copiedTimer);
+    copiedId = btnId;
+    render();
+    copiedTimer = setTimeout(() => { copiedId = null; render(); }, 2000);
+  });
+}
+
+function copyBtn(text, id, small) {
+  const active = copiedId === id;
+  const label = active ? "✓ Copied!" : (small ? "Copy" : "Copy Prompt");
+  const cls = "copy-btn" + (small ? " small" : "") + (active ? " copied" : "");
+  const safeText = text.replace(/\\/g,"\\\\").replace(/`/g,"\\`").replace(/\$/g,"\\$");
+  return `<button class="${cls}" onclick="copyText(\`${safeText}\`,\`${id}\`)">${label}</button>`;
+}
+
+// ═══════════════════════════════════════════════
+// STORY BUILDERS
+// ═══════════════════════════════════════════════
+function buildBase24() {
+  const {name,age,gender,skin,hair,eye,outfit,features,personality,favThings,favFood,favAnimal,theme,setting,suppChars,villain,specialObj,lesson,palette,trimSize} = F;
+  const tag = makeTag(name); const he = pronoun(gender); const his = possessive(gender);
+  const companionRaw = suppChars ? suppChars.split(/[,;]/)[0].trim() : "a new friend";
+  const namedMatch = companionRaw.match(/named\s+(\w+)/i); const companionName = namedMatch ? namedMatch[1] : (companionRaw.split(/\s+/)[2] || companionRaw.split(/\s+/)[0]);
+  const ctag = makeTag(companionName);
+  const n = name || "the hero";
+  const vill = villain || "the obstacle";
+  const spec = specialObj || "their most important thing";
+  const style = STYLE_NAMES[F.selectedStyle] || "Pixar Animation 3D";
+  const pal = palette || "bright vibrant colours";
+  const trim = trimSize || "8×8 inch square";
+  const lock = "LOCKED — same as anchor image throughout book";
+
+  const p = (num,title,writing,tool,action,pos,bg,note) => ({
+    n:num, title, writing, tool, action, pos, bg, storyNote:note,
+    tag, ctag, companionName, skin, hair, eye, outfit, features, style, pal, trim, lock
+  });
+
+  const d = (txt) => "✏️ WRITING DIRECTION — paste the Master Prompt (Tab 2) into Claude to generate actual story text.\n\n" + txt;
+
+  return [
+    p("COVER","Title Page",
+      d("Invent a title that is specific and surprising — not generic. If "+n+" loves dinosaurs and goes to a food world, try something like \""+n+" and the Great Biscuit Stampede.\" The title should make a stranger laugh or smile. Test it aloud."),
+      "Action Editor","standing heroically with a big joyful smile, arms slightly raised in excitement, full body",
+      "full body, centre frame, looking at viewer",
+      "vibrant cover background evoking the story's world — "+(setting||"the adventure setting")+" — wide, colourful and welcoming",
+      "Cover page. Hero at their most exciting. Make it irresistible."),
+
+    p(1,"The World of "+n,
+      d("Open mid-action — "+n+" doing something they love, not a bland introduction. Show personality immediately through behaviour, not description. Weave in their love of "+favThings+" organically — it appears as what they are doing, not as a fact stated. End on something that feels slightly off: a hint that the ordinary day is about to crack open."),
+      "Action Editor","caught mid-action doing something they love, fully absorbed, eyes bright — completely in their element",
+      "full body, slightly left of centre, dynamic and alive",
+      n+"'s home — rich with personal detail, objects and colours that reflect who they are",
+      "Open mid-action. Show don't tell. Personality before backstory. Hook at the end."),
+
+    p(2,"Something Shifts",
+      d("The ordinary world splinters. Something arrives or goes wrong that makes the familiar feel suddenly strange. Do not explain it — just show it landing. Write the surprise with physicality: what does "+n+"'s body do before their brain catches up? End on a single line that makes the reader physically turn the page."),
+      "Action Editor","body reacting before brain — a full-body gasp, frozen mid-motion, eyes wide and fixed on something extraordinary",
+      "full body, centre frame, caught in the moment of shock",
+      "home setting cracked open by something impossible — a glow, an impossible visitor, something that should not be there",
+      "Physical reaction before words. The world cracks open. Hard hook at the end."),
+
+    p(3,"No Turning Back",
+      d(n+" makes a choice. They do not have to go — but they go anyway. This moment must feel brave, slightly reckless, and completely right for who "+n+" is. Write the departure with energy and a trace of nerves. The last line should sit on the threshold — one foot in each world."),
+      "Action Editor","one decisive step forward — nervous excitement all over their face, chin up, ready",
+      "full body, dynamic forward-facing pose, the world behind them and something extraordinary ahead",
+      "a threshold — the familiar world behind, the unknown glowing ahead",
+      "Brave. Reckless. Completely right. On the threshold."),
+
+    p(4,"A World Unlike Any Other",
+      d("The adventure world reveals itself. This is the visual centrepiece of the opening act — make it land like a gasp. Use one specific, surprising sensory detail that could not come from anywhere else. Do not list features — describe the single most extraordinary thing and let it imply the rest."),
+      "Action Editor","standing small inside something enormous and dazzling — arms slightly out, unable to take it all in",
+      "full body, mid-frame, dwarfed beautifully by the world around them",
+      "the adventure world in full reveal — "+(setting||"extraordinary and impossible")+" — one specific astonishing detail dominates",
+      "Gasp moment. One extraordinary detail. Let it imply the whole world."),
+
+    p(5,"A Voice in the Crowd",
+      d("The supporting character arrives — but do not announce them. Let them appear unexpectedly and speak first. Their voice must sound completely different from "+n+"'s. The meeting should feel like a collision, not a greeting — a little awkward, a little funny, already the beginning of something real."),
+      "Multi-Character V2",
+      tag+" and "+ctag+" in an awkward, charming, slightly surprised first meeting — both uncertain but curious",
+      tag+" on the right, "+ctag+" on the left, both caught off-guard and facing each other with wide eyes",
+      "an unexpected corner of the adventure world — the meeting feels accidental and fated at once",
+      "Collision, not greeting. Different voices. Already complicated. Already interesting."),
+
+    p(6,"The Thing That Has Gone Wrong",
+      d("The real problem is revealed — and it is bigger than "+n+" expected. Use "+companionName+"'s account to show the stakes, but keep it vivid and specific rather than expository. End with "+n+" making a commitment that feels genuine — rooted in their specific personality, not just heroism."),
+      "Multi-Character V2",
+      tag+" listening with absolute focus, expression shifting from curious to determined — this matters now",
+      tag+" centre, upright and focused. "+ctag+" gesturing urgently — both fully engaged",
+      "the adventure world showing its wound — something visibly wrong or missing in the landscape",
+      "Stakes through emotion, not exposition. The commitment is genuine."),
+
+    p(7,"The Plan",
+      d(n+" solves problems in a way that is specific to them. Their plan must surprise the reader slightly — it is not the obvious solution. It connects directly to "+favThings+" or their personality. "+companionName+"'s reaction should tell us how unusual and perfect this idea is. End on movement — they are already going."),
+      "Action Editor","mid-idea — eyes lit up, one finger in the air, grinning at a thought only they could have had",
+      "full body, centre, all energy forward — a plan crystallising in real time",
+      "a breathing space in the adventure world — somewhere safe, somewhere to think",
+      "Specific, surprising, completely theirs. The plan reveals character."),
+
+    p(8,"Head First",
+      d("Into the first real challenge. Do not build up to it — start in the middle of it. "+n+" must use something they know — their skills, their interests, their way of seeing the world. Write the attempt with physical detail and real effort. No easy wins. Leave the outcome uncertain at the page turn."),
+      "Action Editor","fully committed, mid-attempt, putting everything into it — effort visible in every part of them",
+      "full body, dynamic and unstable — success not yet guaranteed",
+      "the first challenge in full — vivid, specific, visually striking",
+      "Start in the middle. Real effort. Outcome uncertain at the page turn."),
+
+    p(9,"YES!",
+      d("Earned triumph. The win lands because we felt the struggle. One explosive moment of pure joy — physical, loud, shared. "+companionName+" reacts in a way that is specific to their character. Let the celebration be briefly, gloriously excessive. Then a single line that moves the story forward."),
+      "Multi-Character V2",
+      tag+" and "+ctag+" in full celebration — every part of both of them expressing total joy",
+      "both characters full body, celebrating in their own completely different way",
+      "the challenge location transformed — the problem solved, light returning, something visibly fixed",
+      "Earned triumph. Brief and glorious. Then forward."),
+
+    p(10,"Further In, Further Down",
+      d("The world gets stranger and more beautiful as they go deeper. The friendship between "+n+" and "+companionName+" is building — show it through behaviour, not statement. They have stopped being polite and started being real with each other. One moment of genuine warmth — could be funny, could be quiet, could be both."),
+      "Multi-Character V2","walking together with the easy rhythm of people becoming friends — not quite in step, which is somehow perfect",
+      tag+" and "+ctag+" side by side, both looking ahead, comfortable and alert",
+      "a deeper, stranger, more beautiful layer of the adventure world — something new and astonishing",
+      "The friendship deepening through behaviour. Wonder and growing unease."),
+
+    p(11,"A Different Kind of Hard",
+      d("Second challenge — completely different in nature from the first. If the first was physical, this one is about thinking. "+n+" must draw on a different quality this time. Something almost stops them. The solution should be surprising even to "+n+"."),
+      "Action Editor","mid-problem — working hard, brow furrowed, trying something that might not work",
+      "full body, problem-solving in physical space — uncertain but committed",
+      "second challenge location — completely different texture and atmosphere to the first",
+      "Different in every way from challenge one. Surprising solution. Real difficulty."),
+
+    p(12,"The Wobble",
+      d(n+" almost gives up. Not dramatically — quietly. A private moment of real doubt. Write it with honesty and no melodrama — just the feeling of being small in front of something too big. Then something small tips the balance. Not a speech or a magical boost — a tiny thing: a memory, a detail, a look from "+companionName+"."),
+      "Expression Editor","a completely private expression — doubt and something small and stubborn fighting it out on their face",
+      "close-up, face only, unguarded — the moment before they decide",
+      "the world at its most indifferent — the challenge unchanged, everything waiting",
+      "Real doubt. No melodrama. A tiny thing tips them back."),
+
+    p(13,n+"'s Moment",
+      d("The breakthrough. "+n+" uses the thing that makes them uniquely themselves — their specific knowledge, their particular way of thinking, their love of "+favThings+" — to do something nobody else could have done here. The solution should feel inevitable in hindsight and genuinely surprising in the moment."),
+      "Action Editor","completely in the zone — doing the one thing they were made for, every part of them aligned",
+      "full body, skill in full flight — capable, focused, magnificent",
+      "the challenge cracking open — things beginning to shift and resolve around them",
+      "Inevitable in hindsight. Surprising in the moment. Made for this."),
+
+    p(14,"The Last Hill",
+      d("The climax is close. Both characters feel it — the air changes, the world gets quieter, something huge is just ahead. One brief exchange between "+n+" and "+companionName+" that shows how far they have both come. Three or four lines — and land with genuine emotion. End on the threshold."),
+      "Multi-Character V2","shoulder to shoulder, moving forward — quieter now, more serious, the stakes written in their posture",
+      tag+" slightly ahead, "+ctag+" close behind — both facing the same direction, both committed",
+      "the approach — something enormous and defining waits just ahead, visible but not yet arrived",
+      "Weight and anticipation. Brief, genuine exchange. The threshold."),
+
+    p(15,"Face to Face",
+      d("The confrontation. Do not write the villain as a monster — write them as something more interesting. But look carefully and there is already something sad or confused in them that "+n+" — and the reader — might notice before the villain does. "+n+" stands their ground not because they are unafraid, but because they are more something else — more curious, more determined, more themselves."),
+      "Multi-Character V2",
+      tag+" standing completely still in front of something overwhelming — not fearless, but present and steady",
+      tag+" small but grounded in the foreground. The villain vast and imposing behind. "+ctag+" visible just behind "+tag+".",
+      "the villain's world — huge in scale, charged with emotion, not quite as it first appears",
+      "The confrontation. The villain is already interesting. The hero is already more than afraid."),
+
+    p(16,"The Moment",
+      d("The climax. Do not write what happens — write what it feels like. The action is almost secondary to the emotional reality: "+n+" choosing to be who they are, fully, without apology, in the hardest possible situation. Write in short, percussive sentences. End on a held breath, a moment before we know the outcome."),
+      "Action Editor","the most committed action of the entire story — everything given, nothing held back",
+      "full body, peak moment — the most dynamic and decisive image in the book",
+      "the climax in physical form — the world reacting, everything in motion",
+      "Short. Percussive. Action and emotion simultaneously. Held breath."),
+
+    p(17,"Oh.",
+      d("The unexpected turn. The villain goes quiet. Something shifts in them — not dramatically, but genuinely. Write the silence before you write the sound. What does "+n+" notice? A small detail — a gesture, an expression — that reframes everything. The villain becomes a person. Write with restraint. Less is more."),
+      "Expression Editor","the villain's face — something cracking open that was sealed shut; a feeling appearing that they have forgotten how to have",
+      "close-up, filling the frame — the shift is happening in real time, unmistakable",
+      "the same space, but the light has changed — warmer, more uncertain, no longer threatening",
+      "Silence before sound. Restraint. The villain becomes a person."),
+
+    p(18,"What "+n+" Does Next",
+      d("This is the heart of the whole book. "+n+" does something that nobody asked them to do and nobody expected. It comes directly from who they are. It should be a small, specific act, not a grand gesture. The right word, the right thing given, the right thing noticed. Write the moment with quiet precision. The lesson is never named. It is simply done."),
+      "Multi-Character V2",
+      tag+" doing the unexpected, quiet, perfect thing — entirely themselves, entirely present",
+      tag+" close to the villain — no barrier between them, a genuine human moment",
+      "the space between them — intimate now, the scale reduced to just two beings",
+      "Small, specific, entirely them. The lesson done, not said."),
+
+    p(19,"Everything at Once",
+      d("The world responds. Change cascades. Write it as sensation — colour, sound, movement. What does it feel like to stand inside a world that is healing? Give "+companionName+" a specific reaction that is completely in character. Let "+n+" just stand in it for a moment. The page should feel like the first full breath after a long time underwater."),
+      "Action Editor","standing in the middle of something miraculous — arms wide, face up, letting it all wash over them",
+      "full body, open and receiving — the world transforming visibly around them",
+      "the world in transformation — colour and sound and movement cascading, everything becoming itself again",
+      "Sensation, not description. The first full breath."),
+
+    p(20,"All of Them Together",
+      d("Pure joy. Every character celebrating in their own completely specific way. Write the chaos with precision — three or four concrete details of who is doing what, each one character-specific. "+n+" is in the middle of all of it. One small moment of warmth between "+n+" and "+companionName+" inside the larger celebration — just a look, a word, a touch."),
+      "Multi-Character V2","total joyful chaos — everyone celebrating in completely their own way, all at once",
+      "all characters, full body, spread across the scene — everyone visible",
+      "the restored world at its most gorgeous — saturated with colour, full of life",
+      "Specific joy. Character-specific celebration. One quiet moment inside the noise."),
+
+    p(21,"Until Next Time",
+      d("The goodbye. Do not make it sad — make it right. Something funny happens in the farewell that releases the emotion sideways. "+n+" and "+companionName+" say something to each other that is only possible because of everything they have been through. The parting should feel complete and open at the same time. Not goodbye. Until next time."),
+      "Multi-Character V2","a farewell that is somehow both funny and genuinely moving — both characters completely themselves",
+      tag+" and "+ctag+" facing each other one last time — the whole adventure visible in how they look at each other",
+      "the doorway between worlds — the adventure world glowing behind, the familiar world waiting ahead",
+      "Funny and moving simultaneously. Complete and open. Not goodbye."),
+
+    p(22,"Home",
+      d(n+" is back. Everything is the same and nothing is the same. Write the homecoming with physical specificity — what does "+n+" notice first, and how is it different from how they saw it this morning? The home should feel small in a good way: precious, not limiting. Something tiny from the adventure is still with them. Write it quietly. No fanfare. Just arrival."),
+      "Action Editor","back — a little breathless, looking at the familiar as if seeing it for the first time",
+      "full body, just arrived — the body still remembering the adventure while the eyes take in home",
+      "home — exactly as it was, but one small impossible detail has followed them back",
+      "Everything the same. Nothing the same. Quiet arrival. One small impossible thing."),
+
+    p(23,"The Secret",
+      d(n+" alone with the knowledge of everything that happened. Write this without explanation. What does "+n+" do in this private moment — and what does that action tell us about what they have carried home? The lesson, if there is one, is present as feeling, not thought. It should not be possible to summarise this page in a sentence. It should just feel true."),
+      "Action Editor","a private moment of stillness — doing something small that carries the whole weight of the adventure",
+      "full body or three-quarter — quiet, still, completely interior",
+      "home, evening light — warm and small and exactly right",
+      "No explanation. Feeling, not thought. True without being sayable."),
+
+    p(24,"The End (For Now)",
+      d("The final line should make the reader feel the story is complete and could begin again tomorrow. Write the very last image with care — it should echo something from page 1, slightly transformed. The final sentence should be six words or fewer. It should make whoever is reading aloud smile, and make the child feel they are the hero."),
+      "Action Editor","the last image — peaceful, complete, with one tiny detail that promises everything is not over",
+      "tucked in, eyes closing — but the smallest trace of a smile that knows something",
+      "home at night — stars through the window, one small magical glow, the world exactly as it should be",
+      "Echo page 1. Six words or fewer final line. Promises more."),
+  ];
+}
+
+function buildExtra8() {
+  const {name,gender,suppChars,villain,palette,trimSize} = F;
+  const tag = makeTag(name); const he = pronoun(gender); const his = possessive(gender);
+  const companionRaw = suppChars ? suppChars.split(/[,;]/)[0].trim() : "a new friend";
+  const namedMatch = companionRaw.match(/named\s+(\w+)/i); const companionName = namedMatch ? namedMatch[1] : (companionRaw.split(/\s+/)[2] || companionRaw.split(/\s+/)[0]);
+  const ctag = makeTag(companionName);
+  const vill = villain||"the obstacle";
+  const n = name||"the hero";
+  const style = STYLE_NAMES[F.selectedStyle]||"Pixar Animation 3D";
+  const pal = palette||"bright vibrant colours";
+  const trim = trimSize||"8×8 inch square";
+  const {skin,hair,eye,outfit,features} = F;
+  const lock = "LOCKED — same as anchor image throughout book";
+  const p=(num,title,writing,tool,action,pos,bg,note)=>({n:num,title,writing,tool,action,pos,bg,storyNote:note,tag,ctag,companionName,skin,hair,eye,outfit,features,style,pal,trim,lock});
+  const d=(txt)=>"✏️ WRITING DIRECTION — paste the Master Prompt (Tab 2) into Claude to generate actual story text.\n\n"+txt;
+  return [
+    p("extra_funny","A Funny Moment",
+      d("A comedy beat — something goes unexpectedly, hilariously wrong. Write it with precise physical comedy. "+companionName+"'s specific reaction is what makes it land. Keep it brief. The joke should come from character, not situation."),
+      "Multi-Character V2",tag+" in a comical situation — just tripped or covered in something silly. "+ctag+" is doubled over laughing.",
+      tag+" centre in comedic pose, "+ctag+" to the side laughing",
+      "a funny location within the adventure world — something silly has just happened",
+      "Comedy beat. Character-specific. Brief. Before the stakes rise."),
+
+    p("extra_team","Teamwork",
+      d("A moment where "+n+" cannot do this alone — and knows it. "+companionName+" can do the thing "+n+" cannot. Show both characters contributing something different and essential. The moment should make both of them feel more themselves, not less."),
+      "Multi-Character V2","both characters working together cooperatively — each contributing something different to the same task",
+      "both characters side by side, equal in frame, working on something in the middle",
+      "mid-adventure location — a challenge requiring two different skills",
+      "Both essential. Each more themselves through the other."),
+
+    p("extra_disc","A Discovery",
+      d(n+" spots something nobody else has noticed. Write the discovery as a physical sensation before it becomes a thought. The detail that "+n+" notices must connect directly to who they are — their interests, their way of seeing. Leave the meaning of the discovery slightly open at the page turn."),
+      "Action Editor","pointing excitedly at something off-panel, eyes wide with an excited gasp, leaning forward",
+      "full body, leaning forward with one arm pointing, expression of excited discovery",
+      "a location where something significant is hidden or revealed — a clue, key object, hidden path",
+      "Noticed because of who they are. Meaning slightly open at the page turn."),
+
+    p("extra_apply","Using the Discovery",
+      d(n+" knows exactly what to do with it. Write the application with confidence and precision — this is "+n+" in total command of their particular knowledge or skill. The solution should feel surprising to "+companionName+", completely obvious to "+n+"."),
+      "Action Editor","confidently using the discovered item — in their element, capable and focused",
+      "full body, skill-use action pose — completely in control",
+      "same discovery location but now actively using the find — purposeful action",
+      "Surprising to others. Completely obvious to them."),
+
+    p("extra_quiet","A Quiet Moment",
+      d("Everything goes still for one page. No action. No dialogue that moves the plot. Just "+n+" and "+companionName+" being together, having come through something. Write what they notice about each other — a small, specific detail. This page should feel like a held breath between two harder pages."),
+      "Multi-Character V2","both characters sharing a quiet meaningful look — genuine connection and understanding",
+      tag+" and "+ctag+" facing each other, close together, calm and emotionally present",
+      "a peaceful spot — soft light, calm atmosphere, a moment of stillness",
+      "Emotional connection. No plot. Just two people who have been through something together."),
+
+    p("extra_stakes","The Stakes Rise",
+      d("Something goes more wrong than expected. The threat gets bigger. Write the escalation as sensation — what does "+n+" feel in their body when they realise how serious this is? But they do not give up. One line at the end that shows "+n+" choosing to go forward anyway."),
+      "Action Editor","looking up with wide eyes at something much larger than expected — surprised but not defeated",
+      "full body, slightly stepped back in surprise, chin raised looking up",
+      "the adventure world under a new threat — something dramatic happening, scale and drama",
+      "Stakes escalate. Felt in the body. Forward anyway."),
+
+    p("extra_transform","Something New",
+      d("The villain — or obstacle — begins to change. Write this from "+n+"'s perspective: what does "+n+" notice first? A small, specific detail that shifts everything. The villain is not reformed yet — but the possibility is visible. Write with restraint. This is a moment, not a speech."),
+      "Expression Editor","villain's face showing a genuine surprised first-ever smile — warm and real and completely transformed",
+      "close-up or mid-body of the now-transformed villain, face radiating warmth",
+      "the newly restored adventure world — villain now part of the celebration",
+      "A detail, not a speech. The possibility visible. Restraint."),
+
+    p("extra_newfriend","A New Friend for Everyone",
+      d("The former villain is welcomed. Write this with warmth and a trace of awkwardness — genuine belonging is never entirely smooth. "+n+" should be the one who makes the first move toward welcome. The others follow. The new friend's response should be small, genuine, and slightly funny."),
+      "Multi-Character V2",tag+" and "+ctag+" standing with the transformed villain — all three looking warm and connected",
+      "all three characters in a loose group, "+tag+" centre, everyone facing slightly inward",
+      "the beautiful restored world with hints of a new beginning — light, warmth, promise",
+      "Warm. Slightly awkward. Genuine. Funny at the edges."),
+  ];
+}
+
+function assemblePages() {
+  const b = buildBase24();
+  const len = parseInt(F.bookLength)||24;
+  if (len !== 32) return b;
+  const e = buildExtra8();
+  const raw = [
+    b[0],b[1],b[2],b[3],b[4],b[5],b[6],b[7],b[8],b[9],
+    e[0],e[1], b[10],e[2],e[3], b[11],b[12],b[13],
+    e[4],e[5], b[14],b[15],b[16],b[17],b[18],b[19],
+    e[6],e[7], b[20],b[21],b[22],b[23],b[24],
+  ];
+  let num = 1;
+  return raw.map(p => p.n==="COVER" ? p : {...p, n:num++});
+}
+
+function buildMasterPrompt() {
+  const get = k => (F[k]||"").trim();
+  const name       = get("name")        || "[CHILD NAME — fill in Book Brief]";
+  const age        = get("age")         || "[AGE]";
+  const gender     = get("gender")      || "[GENDER]";
+  const skin       = get("skin")        || "[SKIN TONE]";
+  const hair       = get("hair")        || "[HAIR]";
+  const eye        = get("eye")         || "not specified";
+  const outfit     = get("outfit")      || "[OUTFIT]";
+  const features   = get("features")   || "none";
+  const personality= get("personality")|| "[PERSONALITY]";
+  const favThings  = get("favThings")  || "[FAVOURITE THINGS]";
+  const favColour  = get("favColour")  || "not specified";
+  const favFood    = get("favFood")    || "not specified";
+  const favAnimal  = get("favAnimal")  || "not specified";
+  const len        = get("bookLength") || "24";
+  const tone       = get("tone")       || "[TONE]";
+  const theme      = get("theme")      || "[THEME]";
+  const setting    = get("setting")    || "[SETTING]";
+  const lesson     = get("lesson")     || "No specific lesson — pure fun adventure";
+  const suppChars  = get("suppChars")  || "none specified";
+  const villain    = get("villain")    || "none specified";
+  const specialObj = get("specialObj") || "none specified";
+  const artStyle   = STYLE_NAMES[F.selectedStyle] || "[SELECT AN ART STYLE IN THE BOOK BRIEF]";
+  const palette    = get("palette")    || "[COLOUR PALETTE]";
+  const trimSize   = get("trimSize")   || "8×8 inch square";
+  const printSpec  = get("printSpec")  || "300 DPI CMYK for print";
+  const photoUpload= get("photoUpload")|| "No photo — text description only";
+  const dedication = get("dedication") || "";
+  const dedFrom    = get("dedicationFrom") || "";
+  const n   = name;
+  const tag = makeTag(get("name")||"hero");
+  const companionRaw  = suppChars !== "none specified" ? suppChars.split(/[,;]/)[0].trim() : "a supporting character";
+  const namedMatch = companionRaw.match(/named\s+(\w+)/i); const companionName = namedMatch ? namedMatch[1] : (companionRaw.split(/\s+/)[2] || companionRaw.split(/\s+/)[0]);
+  const midEnd   = len==="32" ? "24" : "17";
+  const climaxPg = len==="32" ? "25–28" : "18–20";
+  const resPg    = len==="32" ? "29–31" : "21–23";
+
+  return `You are a senior children's book author and editor with decades of experience across picture books, early readers, and illustrated fiction. You have worked with publishers including Penguin, Scholastic, and Allen & Unwin. Your task is to write a complete, publication-ready personalised children's picture book — polished, edited, and ready to print.
+
+Before you write a single word of story, read this entire brief carefully. Then write.
+
+════════════════════════════════════════
+THE CHILD
+════════════════════════════════════════
+
+NAME:                  ${n}
+AGE:                   ${age}
+GENDER / PRONOUNS:     ${gender}
+SKIN TONE:             ${skin}
+HAIR:                  ${hair}
+EYE COLOUR:            ${eye}
+SIGNATURE OUTFIT:      ${outfit}
+DISTINCTIVE FEATURES:  ${features}
+PERSONALITY:           ${personality}
+FAVOURITE THINGS:      ${favThings}
+FAVOURITE COLOUR:      ${favColour}
+FAVOURITE FOOD:        ${favFood}
+FAVOURITE ANIMAL/PET:  ${favAnimal}
+
+════════════════════════════════════════
+THE BOOK
+════════════════════════════════════════
+
+PAGES:                 ${len}
+THEME:                 ${theme}
+SETTING:               ${setting}
+TONE:                  ${tone}
+LESSON/CORE MESSAGE:   ${lesson}
+SUPPORTING CHARACTERS: ${suppChars}
+VILLAIN / OBSTACLE:    ${villain}
+SPECIAL OBJECT/POWER:  ${specialObj}
+
+════════════════════════════════════════
+NEOLEMON ILLUSTRATION SETTINGS
+════════════════════════════════════════
+
+ART STYLE:             ${artStyle}
+COLOUR PALETTE:        ${palette}
+TRIM SIZE:             ${trimSize}
+PRINT SPEC:            ${printSpec}
+PHOTO REFERENCE:       ${photoUpload}
+MAIN CHARACTER TAG:    ${tag}
+
+COSTUME CONTINUITY: ${n}'s outfit (${outfit}) must be IDENTICAL on every page unless the story explicitly demands a change. Flag any change: OUTFIT NOTE: CHANGED TO — [description] because [story reason].
+${dedication ? `
+════════════════════════════════════════
+DEDICATION PAGE
+════════════════════════════════════════
+
+Print on the first page before the story begins. Typeset centred, italic, with a decorative border.
+
+${dedication}${dedFrom ? "\n\n— " + dedFrom : ""}
+` : ""}
+════════════════════════════════════════
+YOUR CRAFT STANDARD
+════════════════════════════════════════
+
+This book will be read aloud by a parent or carer to a child, possibly hundreds of times. Every sentence must earn its place. Every page must do something — create a feeling, move the story, reveal character. You are not summarising information. You are creating an experience.
+
+Study these two versions of the same page. The first is the kind of flat, generic writing this book must never contain. The second is the standard you are working toward.
+
+❌ DO NOT WRITE LIKE THIS:
+"${n} loved ${favThings}. One day, something happened. ${n} was surprised. They decided to go on an adventure."
+
+✓ WRITE LIKE THIS:
+"${n} was in the middle of the best part — the absolute best part — when it happened.
+CRACK.
+${n} looked up slowly.
+That was new."
+
+Notice the difference: the good version uses specific rhythm, white space, and mystery. It trusts the reader. It ends on something that makes turning the page feel unavoidable.
+
+════════════════════════════════════════
+THE TEN GOLDEN RULES — FOLLOW EVERY ONE
+════════════════════════════════════════
+
+RULE 1 — SHOW, NEVER TELL
+Do not state what a character feels. Show it through what their body does, what they say, what they notice.
+✗ "She was nervous."   ✓ "She wiped her hands on her jeans. Again."
+
+RULE 2 — WEAVE, NEVER LIST
+${n}'s love of ${favThings} must appear as story moments, not as facts announced by the narrator. These details are raw ingredients — transform them. Their knowledge of ${favThings} is what saves the day at the crucial moment. Never write "because ${n} loved ${favThings}..." — just let it be the solution, and let the reader make the connection.
+
+RULE 3 — EVERY PAGE NEEDS A HOOK
+The last line of every page must make the reader physically compelled to turn it. A question. A shock. A sound. A silence that shouldn't be there.
+
+RULE 4 — DIALOGUE MUST SOUND LIKE A REAL PERSON
+Read every line of dialogue aloud before you finalise it.
+✗ "I would like some help," said ${companionName} politely.
+✓ "${companionName} grabbed ${n}'s arm. 'You have to come. Right now. Please.'"
+
+RULE 5 — VARY YOUR SENTENCES DELIBERATELY
+Short sentences create pace and shock. Longer sentences create wonder and breath. Use both.
+Action: "SNAP. The bridge broke. They fell."
+Wonder: "Below them, spread across the valley like a quilt someone very grand had left behind, the whole kingdom glittered."
+
+RULE 6 — THE VILLAIN MUST BE SYMPATHETIC
+The obstacle must have a reason — loneliness, fear, misunderstanding, loss. The resolution comes through ${n}'s empathy or creativity, never through defeat or force.
+
+RULE 7 — THE LESSON IS NEVER STATED
+The theme is: "${lesson}". Show it through what ${n} does. The narrator never explains the moral. The character simply lives it.
+
+RULE 8 — USE SOUND, RHYTHM AND WHITE SPACE
+WHOMP. FIZZ. CRACKLE. POP. Use onomatopoeia. Use line breaks for emphasis. Let a single word sit on its own line when the story calls for it. The page is also a physical object — silence on the page creates silence in the reading.
+
+RULE 9 — AUSTRALIAN SPELLING AND LANGUAGE THROUGHOUT
+colour, favourite, realise, organise, mum, arvo, biscuit, footpath. Never: color, favorite, realize, mom, cookie, sidewalk.
+
+RULE 10 — EDIT BEFORE YOU SUBMIT
+Read every page aloud. Cut every word that is not carrying weight. If a sentence could be removed without the story losing anything, remove it. Picture books are poetry — every word is load-bearing.
+
+════════════════════════════════════════
+STORY STRUCTURE — ${len} PAGES
+════════════════════════════════════════
+
+COVER: Invent a title that is specific and surprising. Test it: would a stranger laugh, smile, or pick up the book based on the title alone?
+
+OPENING — Pages 1–3
+Begin mid-action. ${n} is already doing something they love when the story begins. We meet their personality through what they are doing, not through narration. By the end of page 3, something has arrived, broken, appeared, or been discovered that makes going back to normal impossible.
+
+BUILD-UP — Pages 4–8
+Enter ${setting}. This world must feel invented from scratch — one extraordinary specific detail that couldn't exist anywhere else. We meet ${companionName} through collision, not introduction. By page 8 the stakes are specific, vivid and personal to ${n}.
+
+MIDDLE — Pages 9–${midEnd}
+Three distinct challenges, each requiring a different quality from ${n}. Weave in ${favFood !== "not specified" ? favFood : "their favourite things"}, ${favColour !== "not specified" ? favColour : "their favourite colours"} and ${favAnimal !== "not specified" ? favAnimal : "their pet or favourite animal"} as story moments — not inventory items. Include one genuinely funny beat, one moment of real doubt, and one moment where ${n}'s specific knowledge or personality is the only thing that works.
+
+CLIMAX — Pages ${climaxPg}
+${n} faces ${villain !== "none specified" ? villain : "the central obstacle"} directly. The solution must come from who ${n} uniquely is. Write in short, percussive sentences. The villain's humanity shows through.
+
+RESOLUTION — Pages ${resPg}
+Everything transforms. The lesson is embodied in what ${n} does — never stated. Warm, joyful, specific. Every character has their own moment.
+
+FINAL PAGE
+${n} is home. The last image echoes the first page, slightly changed. The final sentence is six words or fewer. It makes the reader smile and believe there is more to come.
+
+════════════════════════════════════════
+OUTPUT FORMAT — USE FOR EVERY PAGE
+════════════════════════════════════════
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PAGE [N]: [TITLE]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STORY TEXT:
+[2–5 lines. Polished. Read-aloud ready. Australian spelling. Ends on a hook.]
+
+NEOLEMON ILLUSTRATION PROMPT:
+TOOL: [Action Editor / Multi-Character V2 / Expression Editor]
+CHARACTER TAG: ${tag} — ${skin}, ${hair}${eye !== "not specified" ? ", " + eye : ""}, wearing: ${outfit}
+ACTION: [simple present-tense phrase — what the character is doing and expressing]
+POSITION: [where in frame: left / right / centre, full body / close-up / three-quarter]
+BACKGROUND: [one specific, sensory sentence describing the scene environment and mood]
+OUTFIT NOTE: [LOCKED — same as anchor / or CHANGED TO: (description) because (story reason)]
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CRITICAL OUTPUT RULES:
+— Write every page. Do not skip, combine, or summarise any page.
+— Do not add commentary between pages — just the formatted blocks.
+— Edit every page before moving to the next. Read it aloud. Fix it.
+— After all pages, write a full PUBLISHER BRIEF: character descriptions, style guide, palette, trim size, print specs.
+
+You are a professional. Begin with the COVER page now.`;
+}
+
+// ═══════════════════════════════════════════════
+// RENDER ENGINE
+// ═══════════════════════════════════════════════
+function setField(key, val) {
+  F[key] = val;
+  render();
+}
+
+function setTab(i) {
+  currentTab = i;
+  render();
+  window.scrollTo(0,0);
+}
+
+function renderTabs() {
+  document.getElementById("tabsInner").innerHTML = TABS.map((t,i) =>
+    `<button class="tab-btn${currentTab===i?" active":""}" onclick="setTab(${i})">${esc(t)}</button>`
+  ).join("");
+}
+
+function renderPageBlock(page) {
+  const {n,title,writing,tool,action,pos,bg,storyNote,tag,skin,hair,eye,outfit,features,style,pal,trim,lock,ctag,companionName} = page;
+  const promptText = `TOOL:           ${tool}\nCHARACTER TAG:  ${tag} — ${skin||"as described"}${hair?", "+hair:""}${eye?", "+eye:""}${outfit?", wearing: "+outfit:""}${features?", "+features:""}\nART STYLE:      ${style}\nCOLOUR PALETTE: ${pal}\nACTION:         ${action}\nPOSITION:       ${pos}\nBACKGROUND:     ${bg}\nOUTFIT NOTE:    ${lock}\nASPECT RATIO:   1:1 (for ${trim})`;
+  const toolNote = tool==="Multi-Character V2"
+    ? `Upload both anchor images. Tags → Positions → Actions order.\n\n1. "${tag} is [gender] and ${ctag} is [describe ${companionName}]"\n2. "${tag} is [position], ${ctag} is [position]"\n3. "${tag} is [action], ${ctag} is [action]"`
+    : tool==="Expression Editor"
+    ? "Use sliders for face only. Face identity stays fully locked. Perfect for emotional close-ups."
+    : "Upload anchor image. Write action phrase only. Style, face and outfit stay locked.";
+
+  const wid = "writing-"+String(n)+"-"+title.replace(/\s/g,"");
+  const pid = "prompt-"+String(n)+"-"+title.replace(/\s/g,"");
+  const headerBg = n==="COVER" ? "#1a1a2e" : "#2d2d4a";
+
+  return `<div class="page-block">
+  <div class="page-header" style="background:${headerBg}">
+    <span class="page-num">PAGE ${esc(String(n))}</span>
+    <span class="page-title">${esc(title)}</span>
+    <span class="page-tool-badge">${esc(tool)}</span>
+  </div>
+  <div class="page-body">
+    <div>
+      <div class="section-label-sm" style="color:#2563a8">📖 Writing Direction</div>
+      <div class="writing-dir-box">${nl2br(writing)}</div>
+      <div style="display:flex;justify-content:flex-end;margin-top:6px">${copyBtn(writing,wid,true)}</div>
+    </div>
+    <div>
+      <div class="section-label-sm" style="color:#e8a020">⚡ NeoLemon Illustration Prompt</div>
+      <div class="prompt-box">${esc(promptText)}</div>
+      <div style="display:flex;justify-content:flex-end;margin-top:6px">${copyBtn(promptText,pid,true)}</div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div class="section-label-sm" style="color:#0e8c7a">🎬 Director's Note</div>
+        <div class="director-box">${esc(storyNote)}</div>
+      </div>
+      <div>
+        <div class="section-label-sm" style="color:#2563a8">🛠 NeoLemon Tool</div>
+        <div class="tool-box"><strong>${esc(tool)}</strong>\n${esc(toolNote)}</div>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderDedicationBlock() {
+  const ded = F.dedication.trim();
+  if (!ded) return "";
+  const style = STYLE_NAMES[F.selectedStyle]||"[Select style in Book Brief]";
+  const pal = F.palette||"[Select palette]";
+  const trim = F.trimSize||"8×8 inch square";
+  const dedText = ded + (F.dedicationFrom.trim() ? "\n\n— "+F.dedicationFrom.trim() : "");
+  const promptText = `TOOL:           Background Editor (decoration only — no character needed)\nPAGE TYPE:      Dedication / Inscription Page\nART STYLE:      ${style}\nCOLOUR PALETTE: ${pal}\nBACKGROUND:     A beautiful, simple decorative page background — soft ornamental border or frame in the book's colour palette, subtle pattern or floral/star motif in the corners, clean central white space left clear for the typeset dedication text\nTEXT AREA:      Leave the full centre of the image clear and light — dedication text will be added in layout (Canva or IngramSpark). Do NOT generate text in the image.\nASPECT RATIO:   1:1 (for ${trim})\nOUTFIT NOTE:    N/A — character does not appear on this page`;
+  const pid = "ded-prompt";
+  const tid = "ded-text";
+  return `<div class="ded-block">
+  <div class="ded-header">
+    <span class="page-num">PAGE 0</span>
+    <span class="page-title">Dedication Page — Printed Before Story Begins</span>
+    <span class="page-tool-badge">First page of book</span>
+  </div>
+  <div class="page-body">
+    <div>
+      <div class="section-label-sm" style="color:#5b2d8f">💌 Dedication Text — Print-Ready</div>
+      <div class="ded-preview">
+        <div class="ded-stripe" style="top:0"></div>
+        <div class="ded-eyebrow">✦ Dedication ✦</div>
+        <div class="ded-text">${nl2br(ded)}</div>
+        ${F.dedicationFrom.trim() ? `<div class="ded-from">— ${esc(F.dedicationFrom.trim())}</div>` : ""}
+        <div class="ded-stripe" style="bottom:0"></div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:6px">${copyBtn(dedText,tid,true)}</div>
+    </div>
+    <div>
+      <div class="section-label-sm" style="color:#e8a020">⚡ NeoLemon Illustration Prompt — Dedication Page</div>
+      <div class="prompt-box">${esc(promptText)}</div>
+      <div style="display:flex;justify-content:flex-end;margin-top:6px">${copyBtn(promptText,pid,true)}</div>
+    </div>
+    <div class="director-box"><strong>📐 Layout note:</strong> Generate a decorative background in NeoLemon, then add the dedication text as a text layer in Canva Pro or your layout tool. Use a serif font (Georgia, Garamond, or Playfair Display) at 16–18pt, centred, with generous line spacing.</div>
+  </div>
+</div>`;
+}
+
+function renderTab0() {
+  const filled = REQUIRED_FIELDS.filter(k => F[k].trim()).length;
+  const pct = Math.round(filled / REQUIRED_FIELDS.length * 100);
+  const sel = (key, opts, ph) => {
+    const o = [`<option value="">${esc(ph)}</option>`, ...opts.map(o =>
+      typeof o === "string"
+        ? `<option value="${esc(o)}"${F[key]===o?" selected":""}>${esc(o)}</option>`
+        : `<option value="${esc(o.value)}"${F[key]===o.value?" selected":""}>${esc(o.label)}</option>`
+    )].join("");
+    return `<select class="inp" onchange="setField('${key}',this.value)">${o}</select>`;
+  };
+  const inp = (key, ph, multi) => multi
+    ? `<textarea class="inp" placeholder="${esc(ph)}" oninput="setField('${key}',this.value)">${esc(F[key])}</textarea>`
+
+```
+: `<input class="inp" type="text" placeholder="${esc(ph)}" value="${esc(F[key])}" oninput="setField('${key}',this.value)">`;
+```
+
+const field = (label, key, ph, req, hint, multi) =>
+`<div class="field"><label>${esc(label)}${req?'<span class="req">*</span>':""}</label>${ph && ph.startsWith("__sel__")?"":inp(key,ph,multi)}${hint?`<span class="hint">${esc(hint)}</span>`:""}</div>`;
+
+// Style cards
+const styleCards = STYLES_LIST.map(s =>
+`<div class="style-card${F.selectedStyle===s.id?" selected":""}" onclick="setField('selectedStyle','${s.id}')"> <div class="style-name">${esc(s.label)}</div> <div class="style-age">${esc(s.age)}</div> <div class="style-desc">${esc(s.desc)}</div> </div>`
+).join(””);
+
+const selOpts = {
+age: [“2 years old”,“3 years old”,“4 years old”,“5 years old”,“6 years old”,“7 years old”,“8 years old”],
+gender: [“Boy — he/him”,“Girl — she/her”,“Non-binary — they/them”],
+eye: [“Big brown eyes”,“Big dark eyes”,“Bright blue eyes”,“Green eyes”,“Hazel eyes”,“Dark almond eyes”],
+bookLength: [{value:“24”,label:“24 pages”},{value:“32”,label:“32 pages”}],
+tone: [“Funny and silly throughout”,“Exciting and adventurous”,“Warm and gentle”,“Funny + heartwarming ending”,“Mysterious and magical”,“Bright and chaotic fun”,“Calming and reassuring”],
+theme: [“Magical adventure in an enchanted kingdom”,“Space explorer discovers a new planet”,“Underwater ocean kingdom adventure”,“Dinosaur world time travel”,“Superhero origin story”,“Fairy tale forest adventure”,“Jungle rescue mission”,“Pirate treasure hunt”,“Giant food world adventure”,“Miniature world (tiny hero, big world)”,“Circus / carnival adventure”,“Winter wonderland / snow kingdom”,“Custom — describe in story details below”],
+lesson: [“No specific lesson — pure fun adventure”,“Kindness and generosity always win”,“Sharing is better than keeping things to yourself”,“Bravery means doing it even when you’re scared”,“Creativity is your superpower”,“True friendship means accepting differences”,“Believing in yourself makes the impossible possible”,“Everyone deserves to be included”,“It’s okay to ask for help”,“Mistakes are how we learn and grow”],
+palette: [“Warm golds, deep blues, forest greens”,“Deep space purples and midnight blues”,“Bright primary colours — red, yellow, blue”,“Soft pastels — pinks, lilacs, mint greens”,“Earthy naturals — terracotta, sage, warm brown”,“Ocean blues, coral, sandy golds”,“Magical rainbow — every colour, vibrant”,“Warm ambers, burnt orange, forest green”,“Cool silvers, icy blues, white and gold”],
+printSpec: [“300 DPI CMYK for print (NeoLemon free upscale to 2400×3000px)”,“RGB high-res for digital PDF delivery”],
+trimSize: [“8×8 inch square (most popular for picture books)”,“8.5×11 inch portrait”,“10×8 inch landscape”,“6×9 inch portrait”],
+photoUpload: [“No photo — text description only”,“Yes — upload child’s photo to NeoLemon Character Turbo first”],
+};
+
+return `
+
+<div class="section-label">SECTION 1</div>
+<div class="section-title">Book Brief — Fill In Your Details</div>
+<div class="section-desc">Complete the form below. Every field instantly updates the Master Prompt and NeoLemon page prompts.</div>
+<div class="divider"></div>
+<div class="info-box info-teal"><strong>💡 How this works:</strong> Fill the fields below. Your answers flow automatically into the Master Prompt (Tab 2) and every page's NeoLemon illustration prompt (Tab 3). No copy-pasting needed.</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-icon" style="background:#fdf3e0">👦</div><div><div class="card-title">The Child</div><div class="card-sub">This becomes your main character — the hero of the story</div></div></div>
+  <div class="grid-2">
+    <div class="field"><label>Child's Name<span class="req">*</span></label><input class="inp" placeholder="e.g. Isaiah, Amelia, Noah" value="${esc(F.name)}" oninput="setField('name',this.value)"><span class="hint">Becomes the @character tag in NeoLemon</span></div>
+    <div class="field"><label>Age<span class="req">*</span></label>${sel("age",selOpts.age,"— Age —")}</div>
+    <div class="field"><label>Gender / Pronouns<span class="req">*</span></label>${sel("gender",selOpts.gender,"— Gender —")}</div>
+    <div class="field"><label>Skin Tone<span class="req">*</span></label><input class="inp" placeholder="e.g. warm medium brown skin, light skin with freckles" value="${esc(F.skin)}" oninput="setField('skin',this.value)"><span class="hint">Describe freely — specificity = consistency in NeoLemon</span></div>
+    <div class="field"><label>Hair Style &amp; Colour<span class="req">*</span></label><input class="inp" placeholder="e.g. two afro puffs with purple bobbles, short spiky black hair" value="${esc(F.hair)}" oninput="setField('hair',this.value)"><span class="hint">Include style, length, colour and any accessories</span></div>
+    <div class="field"><label>Eye Colour</label>${sel("eye",selOpts.eye,"— Eye Colour —")}</div>
+  </div>
+  <div style="display:grid;gap:14px;margin-top:14px">
+    <div class="field"><label>Signature Outfit / Attire<span class="req">*</span></label><input class="inp" placeholder="e.g. red t-shirt with a yellow star, dark blue jeans, white high-top sneakers with red laces" value="${esc(F.outfit)}" oninput="setField('outfit',this.value)"><span class="hint">⚠️ NeoLemon locks this outfit across ALL pages. Be very specific.</span></div>
+    <div class="field"><label>Distinctive Features</label><input class="inp" placeholder="e.g. round glasses, always has a backpack, freckles on nose" value="${esc(F.features)}" oninput="setField('features',this.value)"></div>
+    <div class="grid-2">
+      <div class="field"><label>Personality Traits<span class="req">*</span></label><input class="inp" placeholder="e.g. brave, curious, loves to dance, very funny" value="${esc(F.personality)}" oninput="setField('personality',this.value)"></div>
+      <div class="field"><label>Favourite Things<span class="req">*</span></label><input class="inp" placeholder="e.g. dinosaurs, painting, Minecraft, soccer" value="${esc(F.favThings)}" oninput="setField('favThings',this.value)"></div>
+      <div class="field"><label>Favourite Colour</label><input class="inp" placeholder="e.g. bright blue, galaxy purple" value="${esc(F.favColour)}" oninput="setField('favColour',this.value)"></div>
+      <div class="field"><label>Favourite Food</label><input class="inp" placeholder="e.g. pizza, cheese toasties" value="${esc(F.favFood)}" oninput="setField('favFood',this.value)"></div>
+      <div class="field"><label>Favourite Animal / Pet</label><input class="inp" placeholder="e.g. fluffy grey cat named Comet" value="${esc(F.favAnimal)}" oninput="setField('favAnimal',this.value)"><span class="hint">Appears naturally in story</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-icon" style="background:#e4f5f2">📖</div><div><div class="card-title">The Book</div><div class="card-sub">Story structure, theme, and world</div></div></div>
+  <div class="grid-2">
+    <div class="field"><label>Book Length<span class="req">*</span></label>${sel("bookLength",selOpts.bookLength,"— Length —")}</div>
+    <div class="field"><label>Story Tone<span class="req">*</span></label>${sel("tone",selOpts.tone,"— Tone —")}</div>
+  </div>
+  <div style="display:grid;gap:14px;margin-top:14px">
+    <div class="field"><label>Story Theme<span class="req">*</span></label>${sel("theme",selOpts.theme,"— Theme —")}</div>
+    <div class="field"><label>Story Setting<span class="req">*</span></label><input class="inp" placeholder="e.g. bedroom → magical kingdom made of giant crackers and lollipop trees" value="${esc(F.setting)}" oninput="setField('setting',this.value)"></div>
+    <div class="field"><label>Core Message / Lesson</label>${sel("lesson",selOpts.lesson,"— Lesson (optional) —")}</div>
+    <div class="field"><label>Supporting Characters</label><textarea class="inp" placeholder="e.g. a tiny talking dragon named Basil who wears a chef's hat" oninput="setField('suppChars',this.value)">${esc(F.suppChars)}</textarea></div>
+    <div class="grid-2">
+      <div class="field"><label>Villain / Obstacle</label><input class="inp" placeholder="e.g. grumpy king who stole all food (sad, not scary)" value="${esc(F.villain)}" oninput="setField('villain',this.value)"></div>
+      <div class="field"><label>Special Object / Power</label><input class="inp" placeholder="e.g. glowing foam sword, magic paint set" value="${esc(F.specialObj)}" oninput="setField('specialObj',this.value)"></div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-icon" style="background:#fdf3e0">💌</div><div><div class="card-title">Dedication Page</div><div class="card-sub">Optional — printed on the very first page of the book, before the story begins</div></div></div>
+  <div class="info-box info-purple"><strong>✍️ What is a dedication page?</strong> A short, personal message from the gift-giver to the child — printed on the first page before the story starts. Makes the book feel truly one-of-a-kind.</div>
+  <div style="display:grid;gap:14px">
+    <div class="field"><label>Your Special Message</label><textarea class="inp" style="font-family:Georgia,serif;min-height:90px" placeholder="e.g. For our wonderful Isaiah — may you always be as brave, curious and brilliant as the hero of this story. We love you to the moon and back." oninput="setField('dedication',this.value)">${esc(F.dedication)}</textarea><span class="hint">Write freely — 2–5 sentences is ideal. Australian spelling please.</span></div>
+    <div class="field"><label>From (optional)</label><input class="inp" placeholder="e.g. With all our love, Mum &amp; Dad" value="${esc(F.dedicationFrom)}" oninput="setField('dedicationFrom',this.value)"></div>
+  </div>
+  ${F.dedication.trim() ? `
+  <div style="margin-top:20px">
+    <div class="section-label-sm" style="color:#5b2d8f;margin-bottom:10px">👁 Dedication Preview</div>
+    <div class="ded-preview">
+      <div class="ded-stripe" style="top:0"></div>
+      <div class="ded-eyebrow">✦ Dedication ✦</div>
+      <div class="ded-text">${nl2br(F.dedication.trim())}</div>
+      ${F.dedicationFrom.trim()?`<div class="ded-from">— ${esc(F.dedicationFrom.trim())}</div>`:""}
+      <div class="ded-stripe" style="bottom:0"></div>
+    </div>
+    <div style="font-size:12px;color:#7a7870;text-align:center;margin-top:8px">This is how your dedication will appear on the first page of the printed book.</div>
+  </div>` : ""}
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-icon" style="background:#fdf3e0">🎨</div><div><div class="card-title">NeoLemon Illustration Style</div><div class="card-sub">Choose one style — NeoLemon locks this across all pages</div></div></div>
+  <div class="info-box info-gold"><strong>⚡ Style Locking:</strong> NeoLemon maintains your chosen style automatically across every scene. Choose ONE — it embeds in every prompt. Mixing styles breaks consistency.</div>
+  <div class="style-grid">${styleCards}</div>
+  <div class="grid-2" style="margin-top:14px">
+    <div class="field"><label>Colour Palette</label>${sel("palette",selOpts.palette,"— Colour Palette —")}</div>
+    <div class="field"><label>Print / Export Spec</label>${sel("printSpec",selOpts.printSpec,"— Print Spec —")}</div>
+    <div class="field"><label>Trim Size</label>${sel("trimSize",selOpts.trimSize,"— Trim Size —")}</div>
+    <div class="field"><label>Photo Upload? (child likeness)</label>${sel("photoUpload",selOpts.photoUpload,"— Photo Upload —")}</div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header"><div class="card-icon" style="background:#e8f5ee">📊</div><div><div class="card-title">Brief Completion</div><div class="card-sub">Required fields filled in</div></div></div>
+  <div class="progress-bar-wrap"><div class="progress-bar" style="width:${pct}%"></div></div>
+  <div class="progress-label">${filled} of ${REQUIRED_FIELDS.length} required fields completed</div>
+  <button class="btn-primary" onclick="setTab(1)">✨ View Generated Master Prompt →</button>
+</div>`;
+}
+
+function renderTab1() {
+const prompt = buildMasterPrompt();
+const pid = “master-prompt”;
+return `
+
+<div class="section-label">SECTION 2</div>
+<div class="section-title">Master Prompt — Auto Generated</div>
+<div class="section-desc">Built from your Book Brief. Copy and paste into Claude at claude.ai to generate the full story. Then use Tab 3 for NeoLemon illustration prompts.</div>
+<div class="divider"></div>
+<div class="info-box info-teal"><strong>📋 How to use:</strong> Click "Copy Full Prompt" below → paste into Claude at claude.ai → get complete story text for every page. Return to Tab 3 for your NeoLemon illustration prompts.</div>
+<div style="position:relative">
+  <div class="monospace-box">${esc(prompt)}</div>
+  <div style="position:absolute;top:12px;right:12px">${copyBtn(prompt,pid,false)}</div>
+</div>
+<div class="bottom-row">
+  <button class="btn-secondary" onclick="setTab(0)">← Edit Brief</button>
+  <button class="btn-teal" onclick="setTab(2)">View Page Prompts →</button>
+</div>`;
+}
+
+function renderTab2() {
+const pages = assemblePages();
+const tag = makeTag(F.name||“hero”);
+const styleName = STYLE_NAMES[F.selectedStyle]||”—”;
+const lockText = `CHARACTER TAG: ${tag}\nAGE/GENDER: ${F.age||"—"}, ${F.gender||"—"}\nSKIN: ${F.skin||"—"}\nHAIR: ${F.hair||"—"}\nEYES: ${F.eye||"—"}\nOUTFIT (LOCKED): ${F.outfit||"—"}\nFEATURES: ${F.features||"—"}\nSTYLE: ${styleName}`;
+
+let html = `
+
+<div class="section-label">SECTION 3</div>
+<div class="section-title">NeoLemon Page Prompts</div>
+<div class="section-desc">Every page has a writing direction note and a NeoLemon-optimised illustration prompt. ${pages.length-1} pages total for your ${F.bookLength||24}-page book.</div>
+<div class="divider"></div>
+<div class="info-box info-gold"><strong>🎯 NeoLemon Workflow:</strong> Use <strong>Character Turbo</strong> first to create your anchor image. Then per page: <strong>Action Editor</strong> (single character), <strong>Multi-Character V2</strong> (2+ characters), <strong>Expression Editor</strong> (emotion close-ups).</div>`;
+
+if (F.name) {
+html += `<div class="char-lock-box"> <div style="font-family:Georgia,serif;font-weight:700;font-size:15px;color:#1a1a2e;margin-bottom:10px">🔒 Character Consistency Lock — Paste into every NeoLemon session</div> <div class="char-lock-grid"> ${[["Character tag",tag],["Age / Gender",`${F.age||”—”}, ${F.gender||”—”}`],["Skin tone",F.skin||"—"],["Hair",F.hair||"—"],["Eyes",F.eye||"—"],["Outfit (LOCKED)",F.outfit||"—"],["Distinctive features",F.features||"—"],["NeoLemon style",styleName]].map(([k,v])=>`<div><strong>${esc(k)}:</strong> ${esc(v)}</div>`).join("")} </div> ${copyBtn(lockText,"charlock",true)} </div>`;
+if (F.dedication.trim()) html += renderDedicationBlock();
+html += pages.map(p => renderPageBlock(p)).join(””);
+} else {
+html += `<div class="info-box info-sky"><strong>👆 Fill in the Book Brief first (Tab 1)</strong> to generate all page prompts here.</div>`;
+}
+html += `<div class="bottom-row"><button class="btn-secondary" onclick="setTab(1)">← Master Prompt</button><button class="btn-teal" onclick="setTab(3)">NeoLemon Workflow →</button></div>`;
+return html;
+}
+
+function renderTab3() {
+const wfSteps = [
+{num:1,title:“Create Your Anchor Character Image — Character Turbo V2”,
+desc:“Before generating any story scenes, go to Character Turbo in NeoLemon’s dashboard. Enter your character description (use the Character Consistency Lock from Tab 3). Generate a full-body, front-facing image on a clean background. This is your anchor — every page references this image. Spend time getting this right.\n\nIf using a child’s photo: upload it to Character Turbo and use Photo-to-Cartoon mode.”,
+tags:[“Tool: Character Turbo V2”,“Full body front view”,“Clean background”,“Save as anchor image”]},
+{num:2,title:“Create Supporting Character Anchor Images”,
+desc:“Repeat Step 1 for every named supporting character. Each needs their own anchor image before they appear in scenes. Label each one in NeoLemon as @charactername (e.g. @basil, @nova).”,
+tags:[“One anchor per character”,“Matching art style”,“Label with @tag”]},
+{num:3,title:“Single-Character Scenes — Action Editor”,
+desc:‘For pages with only the main character, use the Action Editor. Upload your anchor image then write a simple action prompt. NeoLemon changes only the pose while keeping face, hair, outfit and style identical.\n\nFormat: “[character] [doing what], [expression], [body position]”\nExample: “standing and waving, smiling with joy, full body, facing viewer”’,
+tags:[“Tool: Action Editor”,“Upload anchor image”,“Simple action phrase”]},
+{num:4,title:“Multi-Character Scenes — Multi-Character V2”,
+desc:‘For pages with 2+ characters, use Multi-Character V2. Upload both anchor images. Use the exact 3-step structure:\n\nStep A — Tags: “@char1 is a [description] and @char2 is a [description]”\nStep B — Positions first: “@char1 is on the left, @char2 is on the right”\nStep C — Then actions: “@char1 is pointing excitedly, @char2 is looking surprised”’,
+tags:[“Tool: Multi-Character V2”,“3-step prompt order”,“Tags → Positions → Actions”]},
+{num:5,title:“Expression Close-Ups — Expression Editor”,
+desc:“For emotional moments or close-up face panels, use the Expression Editor. Adjusts only the face — head tilt, eye direction, eyebrow position, mouth shape — without changing any other features.”,
+tags:[“Tool: Expression Editor”,“Sliders for face control”,“No character drift”]},
+{num:6,title:“Add Backgrounds — Background Editor”,
+desc:‘Once your character pose is locked, use the Background Editor to place them in the scene. Enter a simple background description.\n\nFormat: Simple, vivid, one sentence.\nExample: “a magical forest with giant lollipop trees and a rainbow river”’,
+tags:[“Tool: Background Editor”,“Simple vivid description”,“Character untouched”]},
+{num:7,title:“Outfit Changes (Story-Dictated Only) — Outfit Editor”,
+desc:“Only use the Outfit Editor when the story requires a costume change. The Outfit Editor swaps clothing while keeping face, hair, skin and proportions identical. Keep costume changes minimal.”,
+tags:[“Tool: Outfit Editor”,“Story-dictated only”,“Face stays locked”]},
+{num:8,title:“Export & Upscale — Print-Ready Files”,
+desc:“NeoLemon includes free upscaling to 2400×3000px (300 DPI) on all paid plans — sufficient for print publishing. Export as PNG or JPG. Use NeoLemon’s built-in Storyboard View to arrange pages, add text, and export directly to PDF.”,
+tags:[“Free print upscale included”,“2400×3000px at 300 DPI”,“Storyboard → PDF export”]},
+];
+return `
+
+<div class="section-label">SECTION 4</div>
+<div class="section-title">NeoLemon Step-by-Step Workflow</div>
+<div class="section-desc">Follow these steps in order for every book. Based on official NeoLemon tutorials and creator best practices.</div>
+<div class="divider"></div>
+${wfSteps.map(s => `<div class="wf-step">
+  <div class="wf-num">${s.num}</div>
+  <div>
+    <div class="wf-title">${esc(s.title)}</div>
+    <div class="wf-desc">${esc(s.desc)}</div>
+    <div class="wf-tags">${s.tags.map(t=>`<span class="wf-tag">${esc(t)}</span>`).join("")}</div>
+  </div>
+</div>`).join("")}`;
+}
+
+function renderTab4() {
+const tips = [
+{icon:“🎯”,title:“Anchor Image First — Always”,desc:“Never generate story scenes before creating your character’s anchor image. The anchor is what NeoLemon references to lock identity. A bad anchor = inconsistency on every page. Spend 10–15 minutes perfecting it.”},
+{icon:“👗”,title:“Describe Outfits with Extreme Specificity”,desc:“Instead of ‘blue shirt,’ write ‘short-sleeved bright blue t-shirt with a yellow star on the chest, dark blue jeans with rolled cuffs, white high-top sneakers with red laces.’ The more specific, the more consistent.”},
+{icon:“🖼️”,title:“Clean Background on Anchor”,desc:“Generate your anchor image on a plain white or solid colour background. Busy backgrounds confuse NeoLemon about which elements belong to the character. Add backgrounds later using the Background Editor.”},
+{icon:“🎨”,title:“One Style, Entire Book”,desc:“Choose one NeoLemon style and never change it mid-book. Even switching for a single page will destroy the book’s visual coherence. NeoLemon locks style through the session.”},
+{icon:“📐”,title:“Match Aspect Ratios Book-Wide”,desc:“Set your aspect ratio before generating image one, and keep it the same for every page. For 8×8 books use 1:1 square. Mixing ratios means reformatting every image individually.”},
+{icon:“🔄”,title:“Regenerate, Don’t Patch”,desc:“If a page image is close but not right, regenerate it entirely rather than patching in Canva. NeoLemon regeneration takes 3 seconds. Patching usually makes it look worse.”},
+{icon:“📋”,title:“Tags → Positions → Actions (Always This Order)”,desc:“For multi-character scenes: 1. Define who is who with @tags. 2. Set spatial positions (left, right, front, behind). 3. Then add what they’re doing. This order prevents character feature blending.”},
+{icon:“✂️”,title:“One Change at a Time”,desc:“Don’t change pose, expression, outfit and background all at once. Start with Action Editor for the pose. Then Background Editor for the setting. Keep each prompt change focused on one variable.”},
+{icon:“💬”,title:“Simple Action Phrases Work Best”,desc:’“Running and laughing” outperforms “the character runs through the forest while laughing and pointing at the dragon.” NeoLemon needs clear, concise actions — not narrative descriptions.’},
+{icon:“🌄”,title:“Background: One Sentence, Vivid Noun”,desc:’“A cosy bedroom with warm golden light and star-covered walls” beats “the bedroom where the child lives.” Lead with the location noun, then 2–3 atmosphere descriptors.’},
+{icon:“😄”,title:“Expression Words That Work”,desc:“Use: laughing with delight, wide-eyed with wonder, determined expression, surprised open mouth, warm gentle smile, concerned brow, jumping with joy, tearful but brave. Avoid vague words like ‘happy’ or ‘sad.’”},
+{icon:“📚”,title:“Build a Scene Library”,desc:“Save every successful generated image inside NeoLemon’s project folder. If you need a similar pose or background for a later page, regenerate a variation from that saved image rather than starting from scratch.”},
+{icon:“📏”,title:“Use NeoLemon’s Free Upscale”,desc:“NeoLemon upscales all images to 2400×3000px (300 DPI) for free on all paid plans. This is print-ready for most picture book sizes. Always upscale before exporting final files for IngramSpark or Blurb.”},
+{icon:“📄”,title:“Storyboard View for Layout”,desc:“Use NeoLemon’s built-in Storyboard View to arrange pages, add text boxes, adjust typography, and export a PDF directly. For advanced design, export images and use Canva Pro.”},
+{icon:“🔍”,title:“Quality Checklist Before Printing”,desc:“Before exporting: check character looks identical on every page, clothing matches across all pages (unless story-dictated change), no odd hands/fingers/extra limbs, backgrounds feel cohesive, text areas are clear.”},
+{icon:“💰”,title:“NeoLemon Credit Planning”,desc:“Creator Plan: ~$29 AUD/month = 600 credits. Each image = ~4 credits. A 24-page book needs ~120–150 images (including regens). One book per month comfortably fits within the plan.”},
+];
+return `
+
+<div class="section-label">SECTION 5</div>
+<div class="section-title">Tips, Tricks & Best Practices</div>
+<div class="section-desc">Extracted from NeoLemon's official tutorials, creator stories, and the team's own guidance.</div>
+<div class="divider"></div>
+<div class="sub-heading">🔒 Character Consistency</div>
+<div class="tip-grid">${tips.slice(0,6).map(t=>`<div class="tip-card"><div class="tip-icon">${t.icon}</div><div class="tip-title">${esc(t.title)}</div><div class="tip-desc">${esc(t.desc)}</div></div>`).join("")}</div>
+<div class="divider"></div>
+<div class="sub-heading">✍️ Prompting Techniques</div>
+<div class="tip-grid">${tips.slice(6,12).map(t=>`<div class="tip-card"><div class="tip-icon">${t.icon}</div><div class="tip-title">${esc(t.title)}</div><div class="tip-desc">${esc(t.desc)}</div></div>`).join("")}</div>
+<div class="divider"></div>
+<div class="sub-heading">🖨️ Print & Publishing</div>
+<div class="tip-grid">${tips.slice(12).map(t=>`<div class="tip-card"><div class="tip-icon">${t.icon}</div><div class="tip-title">${esc(t.title)}</div><div class="tip-desc">${esc(t.desc)}</div></div>`).join("")}</div>
+<div class="info-box info-green"><strong>🎓 Official NeoLemon Resources:</strong> Watch the 46-minute AI Cartoon Story Illustrations Masterclass at neolemon.com/guides/ · Character Turbo step-by-step tutorial on YouTube · Multi-Character V2 guide at neolemon.com/blog/ · Creator stories and real book examples in the Creator Stories section.</div>`;
+}
+
+function render() {
+renderTabs();
+const renders = [renderTab0, renderTab1, renderTab2, renderTab3, renderTab4];
+document.getElementById(“mainContent”).innerHTML = renders[currentTab]();
+}
+
+render();
+</script>
+
+</body>
+</html>
